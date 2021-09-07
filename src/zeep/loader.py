@@ -65,7 +65,7 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
         return elementtree
     except etree.XMLSyntaxError as exc:
         raise XMLSyntaxError(
-            "Invalid XML content received (%s)" % exc.msg, content=content
+            "Invalid XML content received !! (%s)" % exc.msg, content=content
         )
 
 
