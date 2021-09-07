@@ -37,6 +37,7 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
+    content = content.replace(b'\\x..', b'')
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
