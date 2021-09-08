@@ -1,5 +1,6 @@
 import os.path
 import typing
+import re
 from urllib.parse import urljoin, urlparse, urlunparse
 
 from lxml import etree
@@ -37,7 +38,7 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
-    content = content.replace(b'\\x..', b'')
+    content = re.sub('\\\x..', '', content)
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
