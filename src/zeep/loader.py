@@ -1,6 +1,7 @@
 import os.path
 import typing
 import re
+import StringIO, cStringIO, io
 from urllib.parse import urljoin, urlparse, urlunparse
 
 from lxml import etree
@@ -38,7 +39,7 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
-    content = content.decode('utf-8')
+    content = StringIO(content)
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
