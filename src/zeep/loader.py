@@ -39,7 +39,7 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
-    content = io.StringIO(content)
+    content = io.BytesIO(content)
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
