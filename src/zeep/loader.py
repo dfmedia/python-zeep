@@ -1,7 +1,7 @@
 import os.path
 import typing
 import re
-import StringIO, cStringIO, io
+import io
 from urllib.parse import urljoin, urlparse, urlunparse
 
 from lxml import etree
