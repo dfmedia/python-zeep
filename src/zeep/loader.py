@@ -39,7 +39,7 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
-    content = content.decode('utf-8')
+    content = content.encode('utf-8')
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
@@ -47,6 +47,7 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
         resolve_entities=False,
         recover=recover,
         huge_tree=settings.xml_huge_tree,
+        encoding='utf-8',
     )
     parser.resolvers.add(ImportResolver(transport))
     try:
