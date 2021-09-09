@@ -39,7 +39,8 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
-    content = content.encode('utf-8')
+    print(content)
+    content = content.decode('utf-8')
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
@@ -51,7 +52,7 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
     )
     parser.resolvers.add(ImportResolver(transport))
     try:
-        elementtree = fromstring(content.read(), parser=parser, base_url=base_url)
+        elementtree = fromstring(content, parser=parser, base_url=base_url)
         docinfo = elementtree.getroottree().docinfo
         if docinfo.doctype:
             if settings.forbid_dtd:
