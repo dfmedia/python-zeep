@@ -39,8 +39,8 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
-    print(content)
-    content = content.decode('utf-8')
+    content = content.content
+
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
