@@ -40,11 +40,9 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
 
     """
     # content = content.decode('utf-8', 'replace')
-    content = content.decode('utf-8')
-    print(f'CONTENT TYPE: {type(content)}')
-    content = re.sub('\\\\x..', '', content)
-    cut_string = "encoding='UTF-8'"
-    content = content.replace(cut_string, "")
+    print(f'CONTENT TYPE 1: {type(content)}')
+    content = content.decode('ascii', 'replace').encode('utf-8')
+    print(f'CONTENT TYPE 2: {type(content)}')
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
