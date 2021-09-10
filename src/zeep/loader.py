@@ -42,7 +42,7 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
     # content = content.decode('utf-8', 'replace')
     content = content.decode('utf-8')
     print(f'CONTENT TYPE: {type(content)}')
-    content = re.sub(b'\\\\x..', b'', content)
+    content = re.sub('\\\\x..', '', content)
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
