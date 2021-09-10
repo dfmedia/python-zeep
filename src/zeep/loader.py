@@ -39,11 +39,10 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
-    content = content.hex()
-
-    # content = content.decode('utf-8')
-    # print(f'CONTENT TYPE: {type(content)}')
-    # content = re.sub(b'\\\\x..', b'', content)
+    # content = content.decode('utf-8', 'replace')
+    content = content.decode('utf-8')
+    print(f'CONTENT TYPE: {type(content)}')
+    content = re.sub(b'\\\\x..', b'', content)
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
