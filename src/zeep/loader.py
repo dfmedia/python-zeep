@@ -43,6 +43,8 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
     content = content.decode('utf-8')
     print(f'CONTENT TYPE: {type(content)}')
     content = re.sub('\\\\x..', '', content)
+    cut_string = "encoding='UTF-8'"
+    content = content.replace(cut_string, "")
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
@@ -50,7 +52,6 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
         resolve_entities=False,
         recover=recover,
         huge_tree=settings.xml_huge_tree,
-        encoding='utf-8',
     )
     parser.resolvers.add(ImportResolver(transport))
     try:
