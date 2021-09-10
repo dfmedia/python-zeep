@@ -23,7 +23,7 @@ class ImportResolver(Resolver):
             return self.resolve_string(content, context)
 
 
-def parse_xml(content: str, transport, base_url=None, settings=None):
+def parse_xml(content: bytes, transport, base_url=None, settings=None):
     """Parse an XML string and return the root Element.
 
     :param content: The XML string
@@ -39,8 +39,11 @@ def parse_xml(content: str, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
-    print(f'CONTENT TYPE: {type(content)}')
-    content = re.sub(b'\\\\x..', b'', content)
+    content = content.hex()
+
+    # content = content.decode('utf-8')
+    # print(f'CONTENT TYPE: {type(content)}')
+    # content = re.sub(b'\\\\x..', b'', content)
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
