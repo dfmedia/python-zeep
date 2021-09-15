@@ -46,20 +46,12 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
         resolve_entities=False,
         recover=recover,
         huge_tree=settings.xml_huge_tree,
-        ns_clean=True # added
+        ns_clean=True
     )
     parser.resolvers.add(ImportResolver(transport))
-    print(f'CONTENT TYPE 1: {type(content)}') # added
     try:
-        # elementtree = fromstring(content, parser=parser, base_url=base_url)
-        tree = etree.parse(content, parser)
-        if parser.error_log:
-            for i in range(parser.error_log):
-                error = parser.error_log[i]
-            print(f'ERROR MESSAGE: {error.message[i]} ERROR LINE: {error.line[i]} ERROR COL: {error.column}')
-
-        elementtree = etree.tostring(tree.getroot())
-
+        parse_tree = etree.parse(content, parser)
+        elementtree = etree.tostring(parse_tree.getroot())
         docinfo = elementtree.getroottree().docinfo
         if docinfo.doctype:
             if settings.forbid_dtd:
