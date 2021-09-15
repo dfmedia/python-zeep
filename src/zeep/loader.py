@@ -5,7 +5,7 @@ import io
 from urllib.parse import urljoin, urlparse, urlunparse
 
 from lxml import etree
-from lxml.etree import Resolver, XMLParser, XMLSyntaxError, fromstring
+from lxml.etree import Resolver, XMLParser, XMLSyntaxError, fromstring, parse, tostring
 
 from zeep.exceptions import DTDForbidden, EntitiesForbidden, XMLSyntaxError
 from zeep.settings import Settings
@@ -39,11 +39,6 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
-    # content = content.decode('utf-8', 'replace')
-    print(f'CONTENT TYPE 1: {type(content)}')
-    content = re.sub(b'\\xa9|\\xc2|\\xa0|\\xe2|\\x80|\\x8b|\\x00', b'', content)
-    content = content.decode('ascii', 'ignore').encode('utf-8')
-    print(f'CONTENT TYPE 2: {type(content)}')
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
@@ -51,10 +46,20 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
         resolve_entities=False,
         recover=recover,
         huge_tree=settings.xml_huge_tree,
+        ns_clean=True # added
     )
     parser.resolvers.add(ImportResolver(transport))
+    print(f'CONTENT TYPE 1: {type(content)}') # added
     try:
-        elementtree = fromstring(content, parser=parser, base_url=base_url)
+        # elementtree = fromstring(content, parser=parser, base_url=base_url)
+        tree = etree.parse(content, parser)
+        if parser.error_log:
+            for i in range(parser.error_log):
+                error = parser.error_log[i]
+            print(f'ERROR MESSAGE: {error.message[i]} ERROR LINE: {error.line[i]} ERROR COL: {error.column}')
+
+        elementtree = etree.tostring(tree.getroot())
+
         docinfo = elementtree.getroottree().docinfo
         if docinfo.doctype:
             if settings.forbid_dtd:
