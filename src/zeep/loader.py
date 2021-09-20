@@ -78,9 +78,9 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
             "Invalid XML content received !! (%s)" % exc.msg, content=content
         )
     except Exception as exc:
-        raise XMLSyntaxError(
-            "What error is this (%s)" % exc.msg, content=content
-        )
+        print(exc.args, exc.with_traceback())
+
+
 
 
 
