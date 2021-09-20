@@ -51,12 +51,13 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
     parser.resolvers.add(ImportResolver(transport))
     print(f'PARSER: {parser}')
     try:
+        print(f'START PARSE')
         parse_tree = etree.parse(content, parser)
         print(f'PARSE TREE')
         elementtree = etree.tostring(parse_tree.getroot())
         print(f'ELEMENT TREE')
         docinfo = elementtree.getroottree().docinfo
-        print(f'DOCINFO')
+        print(f'DOCINFO: {docinfo}')
         if docinfo.doctype:
             print(f'IF DOCINFO')
             if settings.forbid_dtd:
@@ -76,6 +77,11 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
         raise XMLSyntaxError(
             "Invalid XML content received !! (%s)" % exc.msg, content=content
         )
+    except Exception as exc:
+        raise XMLSyntaxError(
+            "What error is this (%s)" % exc.msg, content=content
+        )
+
 
 
 def load_external(url: typing.IO, transport, base_url=None, settings=None):
