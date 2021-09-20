@@ -85,7 +85,7 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
                     continue
                 for entity in dtd.iterentities():
                     raise EntitiesForbidden(entity.name, entity.content)
-
+        print('RETURN ETREE')
         return elementtree
     except etree.XMLSyntaxError as exc:
         raise XMLSyntaxError(
