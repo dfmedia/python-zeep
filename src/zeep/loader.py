@@ -49,16 +49,22 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
         ns_clean=True
     )
     parser.resolvers.add(ImportResolver(transport))
+    print(f'PARSER: {parser}')
     try:
         parse_tree = etree.parse(content, parser)
+        print(f'PARSE TREE')
         elementtree = etree.tostring(parse_tree.getroot())
+        print(f'ELEMENT TREE')
         docinfo = elementtree.getroottree().docinfo
+        print(f'DOCINFO')
         if docinfo.doctype:
+            print(f'IF DOCINFO')
             if settings.forbid_dtd:
                 raise DTDForbidden(
                     docinfo.doctype, docinfo.system_url, docinfo.public_id
                 )
         if settings.forbid_entities:
+            print(f'IF FORBID')
             for dtd in docinfo.internalDTD, docinfo.externalDTD:
                 if dtd is None:
                     continue
@@ -89,6 +95,7 @@ def load_external(url: typing.IO, transport, base_url=None, settings=None):
         if base_url:
             url = absolute_location(url, base_url)
         content = transport.load(url)
+    print('load external')
     return parse_xml(content, transport, base_url, settings=settings)
 
 
@@ -109,6 +116,7 @@ async def load_external_async(url: typing.IO, transport, base_url=None, settings
         if base_url:
             url = absolute_location(url, base_url)
         content = await transport.load(url)
+    print('load external async')
     return parse_xml(content, transport, base_url, settings=settings)
 
 
