@@ -39,6 +39,16 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
+
+    # content = content.decode('utf-8', 'replace')
+    print(f'CONTENT TYPE 1: {type(content)}')
+    content = re.sub(b'\\xa9|\\xc2|\\xa0|\\xe2|\\x80|\\x8b|\\x00', b'', content)
+    content = content.decode('ascii', 'ignore')
+    print(f'CONTENT TYPE 1.5: {type(content)}')
+
+    content= content.encode('utf-8')
+    print(f'CONTENT TYPE 2: {type(content)}')
+
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
@@ -51,13 +61,17 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
     parser.resolvers.add(ImportResolver(transport))
     print(f'PARSER: {parser}')
     try:
-        print(f'START PARSE')
-        parse_tree = etree.parse(content, parser)
-        print(f'PARSE TREE')
-        elementtree = etree.tostring(parse_tree.getroot())
-        print(f'ELEMENT TREE')
+        elementtree = fromstring(content, parser=parser, base_url=base_url)
         docinfo = elementtree.getroottree().docinfo
         print(f'DOCINFO: {docinfo}')
+
+        # print(f'START PARSE')
+        # parse_tree = etree.parse(content, parser)
+        # print(f'PARSE TREE')
+        # elementtree = etree.tostring(parse_tree.getroot())
+        # print(f'ELEMENT TREE')
+        # docinfo = elementtree.getroottree().docinfo
+
         if docinfo.doctype:
             print(f'IF DOCINFO')
             if settings.forbid_dtd:
@@ -78,7 +92,8 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
             "Invalid XML content received !! (%s)" % exc.msg, content=content
         )
     except Exception as exc:
-        print(exc.args, exc.with_traceback())
+        print(f'EXCEPTION')
+        print(exc.args)
 
 
 
