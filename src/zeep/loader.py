@@ -39,16 +39,8 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
     :rtype: lxml.etree._Element
 
     """
-
-    # content = content.decode('utf-8', 'replace')
-    print(f'CONTENT TYPE 1: {type(content)}')
     content = re.sub(b'\\xa9|\\xc2|\\xa0|\\xe2|\\x80|\\x8b|\\x00', b'', content)
-    content = content.decode('ascii', 'ignore')
-    print(f'CONTENT TYPE 1.5: {type(content)}')
-
-    content= content.encode('utf-8')
-    print(f'CONTENT TYPE 2: {type(content)}')
-
+    content = content.decode('ascii', 'ignore').encode('utf-8')
     settings = settings or Settings()
     recover = not settings.strict
     parser = XMLParser(
@@ -59,44 +51,28 @@ def parse_xml(content: bytes, transport, base_url=None, settings=None):
         ns_clean=True
     )
     parser.resolvers.add(ImportResolver(transport))
-    print(f'PARSER: {parser}')
     try:
         elementtree = fromstring(content, parser=parser, base_url=base_url)
         docinfo = elementtree.getroottree().docinfo
-        print(f'DOCINFO: {docinfo}')
-
-        # print(f'START PARSE')
-        # parse_tree = etree.parse(content, parser)
-        # print(f'PARSE TREE')
-        # elementtree = etree.tostring(parse_tree.getroot())
-        # print(f'ELEMENT TREE')
-        # docinfo = elementtree.getroottree().docinfo
-
         if docinfo.doctype:
-            print(f'IF DOCINFO')
             if settings.forbid_dtd:
                 raise DTDForbidden(
                     docinfo.doctype, docinfo.system_url, docinfo.public_id
                 )
         if settings.forbid_entities:
-            print(f'IF FORBID')
             for dtd in docinfo.internalDTD, docinfo.externalDTD:
                 if dtd is None:
                     continue
                 for entity in dtd.iterentities():
                     raise EntitiesForbidden(entity.name, entity.content)
-        print('RETURN ETREE')
         return elementtree
     except etree.XMLSyntaxError as exc:
         raise XMLSyntaxError(
-            "Invalid XML content received !! (%s)" % exc.msg, content=content
+            "Invalid XML content received: (%s)" % exc.msg, content=content
         )
-    except Exception as exc:
-        print(f'EXCEPTION')
-        print(exc.args)
-
-
-
+    except Exception as err:
+        print(f'Exception: {err.args}')
+        raise
 
 
 def load_external(url: typing.IO, transport, base_url=None, settings=None):
